@@ -1,0 +1,1109 @@
+{
+  "header_types" : [
+    {
+      "name" : "scalars_0",
+      "id" : 0,
+      "fields" : [
+        ["hasReturned_0", 1, false],
+        ["metadata.nextHop", 32, false],
+        ["metadata.egress_port", 9, false],
+        ["_padding_0", 6, false]
+      ]
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 1,
+      "fields" : [
+        ["ingress_port", 9, false],
+        ["egress_spec", 9, false],
+        ["egress_port", 9, false],
+        ["clone_spec", 32, false],
+        ["instance_type", 32, false],
+        ["drop", 1, false],
+        ["recirculate_port", 16, false],
+        ["packet_length", 32, false],
+        ["enq_timestamp", 32, false],
+        ["enq_qdepth", 19, false],
+        ["deq_timedelta", 32, false],
+        ["deq_qdepth", 19, false],
+        ["ingress_global_timestamp", 48, false],
+        ["egress_global_timestamp", 48, false],
+        ["lf_field_list", 32, false],
+        ["mcast_grp", 16, false],
+        ["resubmit_flag", 32, false],
+        ["egress_rid", 16, false],
+        ["checksum_error", 1, false],
+        ["recirculate_flag", 32, false],
+        ["parser_error", 32, false],
+        ["_padding", 5, false]
+      ]
+    },
+    {
+      "name" : "Ethernet_h",
+      "id" : 2,
+      "fields" : [
+        ["dstAddr", 48, false],
+        ["srcAddr", 48, false],
+        ["etherType", 16, false]
+      ]
+    },
+    {
+      "name" : "IPv4_h",
+      "id" : 3,
+      "fields" : [
+        ["version", 4, false],
+        ["ihl", 4, false],
+        ["diffserv", 8, false],
+        ["totalLen", 16, false],
+        ["identification", 16, false],
+        ["flags", 3, false],
+        ["fragOffset", 13, false],
+        ["ttl", 8, false],
+        ["protocol", 8, false],
+        ["hdrChecksum", 16, false],
+        ["srcAddr", 32, false],
+        ["dstAddr", 32, false]
+      ]
+    },
+    {
+      "name" : "empty_metadata_t",
+      "id" : 4,
+      "fields" : [
+        ["test", 16, false]
+      ]
+    }
+  ],
+  "headers" : [
+    {
+      "name" : "scalars",
+      "id" : 0,
+      "header_type" : "scalars_0",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 1,
+      "header_type" : "standard_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ethernet",
+      "id" : 2,
+      "header_type" : "Ethernet_h",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ip",
+      "id" : 3,
+      "header_type" : "IPv4_h",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "userMetadata.empty_metadata",
+      "id" : 4,
+      "header_type" : "empty_metadata_t",
+      "metadata" : true,
+      "pi_omit" : true
+    }
+  ],
+  "header_stacks" : [],
+  "header_union_types" : [],
+  "header_unions" : [],
+  "header_union_stacks" : [],
+  "field_lists" : [],
+  "errors" : [
+    ["NoError", 1],
+    ["PacketTooShort", 2],
+    ["NoMatch", 3],
+    ["StackOutOfBounds", 4],
+    ["HeaderTooShort", 5],
+    ["ParserTimeout", 6],
+    ["IPv4OptionsNotSupported", 7],
+    ["IPv4IncorrectVersion", 8],
+    ["IPv4ChecksumError", 9]
+  ],
+  "enums" : [],
+  "parsers" : [
+    {
+      "name" : "parser",
+      "id" : 0,
+      "init_state" : "start",
+      "parse_states" : [
+        {
+          "name" : "start",
+          "id" : 0,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "ethernet"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x0800",
+              "mask" : null,
+              "next_state" : "parse_ipv4"
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "etherType"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_ipv4",
+          "id" : 1,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "ip"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "value" : "default",
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : []
+        }
+      ]
+    }
+  ],
+  "parse_vsets" : [],
+  "deparsers" : [
+    {
+      "name" : "deparser",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 256,
+        "column" : 8,
+        "source_fragment" : "TopDeparser"
+      },
+      "order" : ["ethernet", "ip"]
+    }
+  ],
+  "meter_arrays" : [],
+  "counter_arrays" : [],
+  "register_arrays" : [],
+  "calculations" : [
+    {
+      "name" : "calc",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 241,
+        "column" : 2,
+        "source_fragment" : "update_checksum(p.ip.isValid() && p.ip.ihl == 5, ..."
+      },
+      "algo" : "csum16",
+      "input" : [
+        {
+          "type" : "field",
+          "value" : ["ip", "ihl"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "diffserv"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "totalLen"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "identification"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "flags"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "fragOffset"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "ttl"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "protocol"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "srcAddr"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "dstAddr"]
+        }
+      ]
+    },
+    {
+      "name" : "calc_0",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 107,
+        "column" : 2,
+        "source_fragment" : "verify_checksum(p.ip.isValid() && p.ip.ihl == 5, ..."
+      },
+      "algo" : "csum16",
+      "input" : [
+        {
+          "type" : "field",
+          "value" : ["ip", "version"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "ihl"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "diffserv"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "totalLen"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "identification"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "flags"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "fragOffset"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "ttl"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "protocol"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "srcAddr"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ip", "dstAddr"]
+        }
+      ]
+    }
+  ],
+  "learn_lists" : [],
+  "actions" : [
+    {
+      "name" : "my_drop",
+      "id" : 0,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "drop",
+          "parameters" : [],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 77,
+            "column" : 1,
+            "source_fragment" : "mark_to_drop()"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "my_drop",
+      "id" : 1,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "drop",
+          "parameters" : [],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 77,
+            "column" : 1,
+            "source_fragment" : "mark_to_drop()"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "my_drop",
+      "id" : 2,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "drop",
+          "parameters" : [],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 77,
+            "column" : 1,
+            "source_fragment" : "mark_to_drop()"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "NoAction",
+      "id" : 3,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "ingress.Set_nhop",
+      "id" : 4,
+      "runtime_data" : [
+        {
+          "name" : "ipv4_dest",
+          "bitwidth" : 32
+        },
+        {
+          "name" : "port",
+          "bitwidth" : 9
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "metadata.nextHop"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 137,
+            "column" : 8,
+            "source_fragment" : "meta.nextHop = ipv4_dest"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ip", "ttl"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "+",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["ip", "ttl"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0xff"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 138,
+            "column" : 8,
+            "source_fragment" : "headers.ip.ttl = headers.ip.ttl-1"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 1
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 139,
+            "column" : 8,
+            "source_fragment" : "standard_metadata.egress_spec = port"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "metadata.egress_port"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 1
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 140,
+            "column" : 8,
+            "source_fragment" : "meta.egress_port = port"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "ingress.Send_to_cpu",
+      "id" : 5,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x000e"
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 16,
+            "column" : 28,
+            "source_fragment" : "0xE; ..."
+          }
+        }
+      ]
+    },
+    {
+      "name" : "ingress.Set_dmac",
+      "id" : 6,
+      "runtime_data" : [
+        {
+          "name" : "dmac",
+          "bitwidth" : 48
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "dstAddr"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 180,
+            "column" : 6,
+            "source_fragment" : "headers.ethernet.dstAddr = dmac"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "act",
+      "id" : 7,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "hasReturned_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : true
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 200,
+            "column" : 6,
+            "source_fragment" : "return"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "act_0",
+      "id" : 8,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "hasReturned_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name" : "my_drop",
+      "id" : 9,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "drop",
+          "parameters" : [],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 77,
+            "column" : 1,
+            "source_fragment" : "mark_to_drop()"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "egress.Set_smac",
+      "id" : 10,
+      "runtime_data" : [
+        {
+          "name" : "smac",
+          "bitwidth" : 48
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "srcAddr"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 217,
+            "column" : 5,
+            "source_fragment" : "headers.ethernet.srcAddr = smac"
+          }
+        }
+      ]
+    }
+  ],
+  "pipelines" : [
+    {
+      "name" : "ingress",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 124,
+        "column" : 8,
+        "source_fragment" : "ingress"
+      },
+      "init_table" : "tbl_act",
+      "tables" : [
+        {
+          "name" : "tbl_act",
+          "id" : 0,
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [8],
+          "actions" : ["act_0"],
+          "base_default_next" : "node_3",
+          "next_tables" : {
+            "act_0" : "node_3"
+          },
+          "default_entry" : {
+            "action_id" : 8,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_my_drop",
+          "id" : 1,
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [2],
+          "actions" : ["my_drop"],
+          "base_default_next" : "tbl_act_0",
+          "next_tables" : {
+            "my_drop" : "tbl_act_0"
+          },
+          "default_entry" : {
+            "action_id" : 2,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_act_0",
+          "id" : 2,
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [7],
+          "actions" : ["act"],
+          "base_default_next" : "node_6",
+          "next_tables" : {
+            "act" : "node_6"
+          },
+          "default_entry" : {
+            "action_id" : 7,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "ingress.ipv4_match",
+          "id" : 3,
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 149,
+            "column" : 10,
+            "source_fragment" : "ipv4_match"
+          },
+          "key" : [
+            {
+              "match_type" : "lpm",
+              "name" : "headers.ip.dstAddr",
+              "target" : ["ip", "dstAddr"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "lpm",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [0, 4],
+          "actions" : ["my_drop", "ingress.Set_nhop"],
+          "base_default_next" : "ingress.check_ttl",
+          "next_tables" : {
+            "my_drop" : "ingress.check_ttl",
+            "ingress.Set_nhop" : "ingress.check_ttl"
+          },
+          "default_entry" : {
+            "action_id" : 0,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        },
+        {
+          "name" : "ingress.check_ttl",
+          "id" : 4,
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 169,
+            "column" : 10,
+            "source_fragment" : "check_ttl"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "headers.ip.ttl",
+              "target" : ["ip", "ttl"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [5, 3],
+          "actions" : ["ingress.Send_to_cpu", "NoAction"],
+          "base_default_next" : "ingress.dmac",
+          "next_tables" : {
+            "ingress.Send_to_cpu" : "ingress.dmac",
+            "NoAction" : "ingress.dmac"
+          },
+          "default_entry" : {
+            "action_id" : 3,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "ingress.dmac",
+          "id" : 5,
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 187,
+            "column" : 10,
+            "source_fragment" : "dmac"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "meta.nextHop",
+              "target" : ["scalars", "metadata.nextHop"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [1, 6],
+          "actions" : ["my_drop", "ingress.Set_dmac"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "my_drop" : null,
+            "ingress.Set_dmac" : null
+          },
+          "default_entry" : {
+            "action_id" : 1,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_3",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 198,
+            "column" : 9,
+            "source_fragment" : "standard_metadata.parser_error != error.NoError"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "!=",
+              "left" : {
+                "type" : "field",
+                "value" : ["standard_metadata", "parser_error"]
+              },
+              "right" : {
+                "type" : "hexstr",
+                "value" : "1"
+              }
+            }
+          },
+          "true_next" : "tbl_my_drop",
+          "false_next" : "node_6"
+        },
+        {
+          "name" : "node_6",
+          "id" : 1,
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "not",
+              "left" : null,
+              "right" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "d2b",
+                  "left" : null,
+                  "right" : {
+                    "type" : "field",
+                    "value" : ["scalars", "hasReturned_0"]
+                  }
+                }
+              }
+            }
+          },
+          "false_next" : null,
+          "true_next" : "ingress.ipv4_match"
+        }
+      ]
+    },
+    {
+      "name" : "egress",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 209,
+        "column" : 8,
+        "source_fragment" : "egress"
+      },
+      "init_table" : "egress.smac",
+      "tables" : [
+        {
+          "name" : "egress.smac",
+          "id" : 6,
+          "source_info" : {
+            "filename" : "vss_v1.p4",
+            "line" : 223,
+            "column" : 10,
+            "source_fragment" : "smac"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "meta.egress_port",
+              "target" : ["scalars", "metadata.egress_port"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 16,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [9, 10],
+          "actions" : ["my_drop", "egress.Set_smac"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "my_drop" : null,
+            "egress.Set_smac" : null
+          },
+          "default_entry" : {
+            "action_id" : 9,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : []
+    }
+  ],
+  "checksums" : [
+    {
+      "name" : "cksum",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 241,
+        "column" : 2,
+        "source_fragment" : "update_checksum(p.ip.isValid() && p.ip.ihl == 5, ..."
+      },
+      "target" : ["ip", "hdrChecksum"],
+      "type" : "generic",
+      "calculation" : "calc",
+      "if_cond" : {
+        "type" : "expression",
+        "value" : {
+          "op" : "and",
+          "left" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["ip", "$valid$"]
+              }
+            }
+          },
+          "right" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "==",
+              "left" : {
+                "type" : "field",
+                "value" : ["ip", "ihl"]
+              },
+              "right" : {
+                "type" : "hexstr",
+                "value" : "0x05"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name" : "cksum_0",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "vss_v1.p4",
+        "line" : 107,
+        "column" : 2,
+        "source_fragment" : "verify_checksum(p.ip.isValid() && p.ip.ihl == 5, ..."
+      },
+      "target" : ["ip", "hdrChecksum"],
+      "type" : "generic",
+      "calculation" : "calc_0",
+      "if_cond" : {
+        "type" : "expression",
+        "value" : {
+          "op" : "and",
+          "left" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["ip", "$valid$"]
+              }
+            }
+          },
+          "right" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "==",
+              "left" : {
+                "type" : "field",
+                "value" : ["ip", "ihl"]
+              },
+              "right" : {
+                "type" : "hexstr",
+                "value" : "0x05"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "force_arith" : [],
+  "extern_instances" : [],
+  "field_aliases" : [
+    [
+      "queueing_metadata.enq_timestamp",
+      ["standard_metadata", "enq_timestamp"]
+    ],
+    [
+      "queueing_metadata.enq_qdepth",
+      ["standard_metadata", "enq_qdepth"]
+    ],
+    [
+      "queueing_metadata.deq_timedelta",
+      ["standard_metadata", "deq_timedelta"]
+    ],
+    [
+      "queueing_metadata.deq_qdepth",
+      ["standard_metadata", "deq_qdepth"]
+    ],
+    [
+      "intrinsic_metadata.ingress_global_timestamp",
+      ["standard_metadata", "ingress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.egress_global_timestamp",
+      ["standard_metadata", "egress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.lf_field_list",
+      ["standard_metadata", "lf_field_list"]
+    ],
+    [
+      "intrinsic_metadata.mcast_grp",
+      ["standard_metadata", "mcast_grp"]
+    ],
+    [
+      "intrinsic_metadata.resubmit_flag",
+      ["standard_metadata", "resubmit_flag"]
+    ],
+    [
+      "intrinsic_metadata.egress_rid",
+      ["standard_metadata", "egress_rid"]
+    ],
+    [
+      "intrinsic_metadata.recirculate_flag",
+      ["standard_metadata", "recirculate_flag"]
+    ]
+  ],
+  "program" : "./vss_v1.p4i",
+  "__meta__" : {
+    "version" : [2, 18],
+    "compiler" : "https://github.com/p4lang/p4c"
+  }
+}

@@ -1,0 +1,24 @@
+digraph ingress {
+subgraph cluster {
+graph [
+label="", labeljust=r, style=bold];
+0[label=__START__, margin="", shape=rectangle, style=solid];
+1[label=__EXIT__, margin="", shape=rectangle, style=solid];
+2[label="standard_metadata.parser_error != <TypeNameExpression>(1614)error.NoError;", margin="", shape=rectangle, style=solid];
+3[label="my_drop_1/my_drop();
+hasReturned_0 = 1;", margin="", shape=rectangle, style=solid];
+4[label="!hasReturned_0;", margin="", shape=rectangle, style=solid];
+5[label="ingress.ipv4_match", margin="", shape=ellipse, style=solid];
+6[label="ingress.check_ttl", margin="", shape=ellipse, style=solid];
+7[label="ingress.dmac", margin="", shape=ellipse, style=solid];
+0 -> 2[label=""];
+2 -> 3[label=TRUE];
+2 -> 4[label=FALSE];
+3 -> 4[label=""];
+4 -> 5[label=TRUE];
+4 -> 1[label=FALSE];
+5 -> 6[label=""];
+6 -> 7[label=""];
+7 -> 1[label=""];
+}
+}

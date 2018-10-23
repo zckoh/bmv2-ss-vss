@@ -1,0 +1,12 @@
+### You can omit the table_set_default commands as 
+### it has been set during compile time on software switch
+
+table_set_default ipv4_match my_drop
+table_set_default check_ttl NoAction
+table_set_default dmac my_drop
+table_set_default smac my_drop
+
+table_add ipv4_match Set_nhop 10.1.1.200/24 => 10.1.1.220 4
+table_add check_ttl Send_to_cpu 0 =>
+table_add dmac Set_dmac 10.1.1.220 => 08:de:ad:be:ef:00
+table_add smac Set_smac 4 => ca:fe:ba:be:d0:0d
